@@ -3,7 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Account;
+use App\User;
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+
 class LoginController extends Controller
 {
     /**
@@ -17,11 +21,33 @@ class LoginController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Show the form for creating a new resource.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param array $data
      * @return \Illuminate\Http\Response
      */
+//    protected function validator(array $data)
+//    {
+//        return Validator::make($data, [
+//            'name' => 'required|string|max255',
+//            'email' => 'required|string|email|max255|unique:users',
+//            'password' => 'required|string|min6|confirmed',
+//        ]);
+//    }
+
+    /**
+     * @param array $data
+     * @return \App\User
+     */
+    public function create()
+    {
+//        return User::create([
+//            'name' => $data['name'],
+//            'email' => $data['email'],
+//            'password' => Hash::make($data['password']),
+//        ]);
+        return view('dangnhap');
+    }
     public function store(Request $request)
     {
 
@@ -36,12 +62,12 @@ class LoginController extends Controller
     public function dangnhap(Request $request)
     {
         $account = Account::where('name' ,'=',$request->get('name'))->first();
-        $check = bcrypt($request->get('password'));
+        $hashedPw = bcrypt($request->get('password'));
         if ($account != null){
-            if (hash_equals($check, $account)) {
+            if (Hash::check($request->get('password'),$hashedPw)){
                 return view('dangnhapthanhcong');
             }
-            else {
+            else{
                 return view('dangnhapthatbai');
             }
         }

@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Account;
+use App\User;
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class AccountController extends Controller
 {
@@ -20,10 +23,29 @@ class AccountController extends Controller
     /**
      * Show the form for creating a new resource.
      *
+     * @param array $data
      * @return \Illuminate\Http\Response
+     */
+//    protected function validator(array $data)
+//    {
+//        return Validator::make($data, [
+//            'name' => 'required|string|max255',
+//            'email' => 'required|string|email|max255|unique:users',
+//            'password' => 'required|string|min6|confirmed',
+//        ]);
+//    }
+
+    /**
+     * @param array $data
+     * @return \App\User
      */
     public function create()
     {
+//        return User::create([
+//            'name' => $data['name'],
+//            'email' => $data['email'],
+//            'password' => Hash::make($data['password']),
+//        ]);
         return view('dangky');
     }
 
@@ -39,12 +61,9 @@ class AccountController extends Controller
         $obj->email = $request->get('email');
         $obj->name = $request->get('name');
         $obj->password = $request->get('password');
-        $obj->password = bcrypt($request->get('password'));
-        $this->validate([
-            'username' => 'required|alpha|min:6|max:10',
-            'email' => 'required|email',
-            'password' => 'required|min:8',
-        ]);
+        $hashedPw = bcrypt($request->get('password'));
+        $salt = str_random(6);
+        $obj-> password = $hashedPw.$salt;
 
         $obj->save();
         return view ('dangkythanhcong');
